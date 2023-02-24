@@ -55,7 +55,7 @@ class AIplayer {
     }
     
     public int minimax(int depth, int turn, Board b) {
-        System.out.println("minimax");
+
         if (b.hasXWon()) return 1;
         if (b.hasOWon()) return -1;
         List<Point> pointsAvailable = b.getAvailablePoints();//25 on a 5x5 at the start
