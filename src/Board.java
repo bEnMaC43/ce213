@@ -65,6 +65,7 @@ class Board {
     }
 
     public List<Point> getAvailablePoints() {
+        int n =0;
         availablePoints = new ArrayList<>();
         for (int i = 0; i < 5; ++i) {
             for (int j = 0; j < 5; ++j) {
@@ -98,5 +99,8 @@ class Board {
             }
             System.out.println();
         }
+    }
+    public Board getBoard(){
+        return this;
     }
 }

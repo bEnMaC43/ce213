@@ -5,7 +5,7 @@ import java.util.*;
 class AIplayer { 
     List<Point> availablePoints;
     public List<PointsAndScores> rootsChildrenScores = new ArrayList<>();
-    private static final int MAX_DEPTH = 4;
+    private static final int MAX_DEPTH = 6;
     
     public AIplayer() {
     }
@@ -55,9 +55,10 @@ class AIplayer {
     }
     
     public int minimax(int depth, int turn, Board b) {
+        System.out.println("minimax");
         if (b.hasXWon()) return 1;
         if (b.hasOWon()) return -1;
-        List<Point> pointsAvailable = b.getAvailablePoints();
+        List<Point> pointsAvailable = b.getAvailablePoints();//25 on a 5x5 at the start
         if (pointsAvailable.isEmpty()) return 0; 
 
         List<Integer> scores = new ArrayList<>(); 
@@ -65,11 +66,11 @@ class AIplayer {
         for (int i = 0; i < pointsAvailable.size(); ++i) {
             Point point = pointsAvailable.get(i);  
 
-            if (turn == 1) { 
-                b.placeAMove(point, 1); 
+            if (turn == 1) {
+                b.placeAMove(point, 1);
                 int currentScore = minimax(depth + 1, 2, b);  
                 scores.add(currentScore); 
-                if (depth == 0) 
+                if (depth == 0 && rootsChildrenScores!=null)
                     rootsChildrenScores.add(new PointsAndScores(currentScore, point));
                 
             } else if (turn == 2) {
