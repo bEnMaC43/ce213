@@ -46,10 +46,10 @@ class Board {
 
     //constructor
     public Board() {
-        for (int i = 0;i < size ; i++){
-            for (int j = 0; j < size ; j++)
-                board[i][j] = 0;
-        }
+//        for (int i = 0;i < size ; i++){
+//            for (int j = 0; j < size ; j++)
+//                board[i][j] = 0;
+//        }
     }
 
     //method for checking whether the game is over
