@@ -129,4 +129,5 @@ class Board {
             System.out.println();
         }
     }
+    public Board getBoard(){return this;}
 }

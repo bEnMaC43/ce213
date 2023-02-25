@@ -17,7 +17,7 @@ public class TicTacToe {
         if(choice == 1){
             AI.callMinimax(0, 1, b);
 	    for (PointsAndScores pas : AI.rootsChildrenScores) {
-	        System.out.println("Point: " + pas.point + " Score: " + pas.score);
+//	        System.out.println("Point: " + pas.point + " Score: " + pas.score);
 	    }
             b.placeAMove(AI.returnBestMove(), 1); 
             b.displayBoard();
@@ -40,7 +40,7 @@ public class TicTacToe {
             
             AI.callMinimax(0, 1, b);
             for (PointsAndScores pas : AI.rootsChildrenScores) {
-                System.out.println("Point: " + pas.point + " Score: " + pas.score);
+//                System.out.println("Point: " + pas.point + " Score: " + pas.score);
             }
             b.placeAMove(AI.returnBestMove(), 1); 
             b.displayBoard();
