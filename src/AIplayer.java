@@ -2,19 +2,19 @@
 
 import java.util.*;
 
-class AIplayer { 
+class AIplayer {
     List<Point> availablePoints;
     public List<PointsAndScores> rootsChildrenScores = new ArrayList<>();
-    private static final int MAX_DEPTH = 6;
-    
+    private static final int MAX_DEPTH = 3;
+
     public AIplayer() {
     }
-    
+
     public Point returnBestMove() {
         int MAX = -100000;
         int best = -1;
 
-        for (int i = 0; i < rootsChildrenScores.size(); ++i) { 
+        for (int i = 0; i < rootsChildrenScores.size(); ++i) {
             if (MAX < rootsChildrenScores.get(i).score) {
                 MAX = rootsChildrenScores.get(i).score;
                 best = i;
@@ -26,7 +26,7 @@ class AIplayer {
     public int returnMin(List<Integer> list) {
         int min = Integer.MAX_VALUE;
         int index = -1;
-        
+
         for (int i = 0; i < list.size(); ++i) {
             if (list.get(i) < min) {
                 min = list.get(i);
@@ -39,7 +39,7 @@ class AIplayer {
     public int returnMax(List<Integer> list) {
         int max = Integer.MIN_VALUE;
         int index = -1;
-        
+
         for (int i = 0; i < list.size(); ++i) {
             if (list.get(i) > max) {
                 max = list.get(i);
@@ -48,106 +48,117 @@ class AIplayer {
         }
         return list.get(index);
     }
- 
-    public void callMinimax(int depth, int turn, Board b){
+
+    public void callMinimax(int depth, int turn, Board b) {
         rootsChildrenScores = new ArrayList<>();
+//        for (Point p : b.getAvailablePoints())
+//            System.out.println(p);
+//        System.out.println("break");
+
         minimax(depth, turn, b);
     }
-    
+
     public int minimax(int depth, int turn, Board b) {
         if (depth > MAX_DEPTH)//stops minimax search continuing to any depth reducing search time significantly
             return 0;
         if (b.hasXWon()) return 1;
         if (b.hasOWon()) return -1;
-        List<Point> pointsAvailable = b.getAvailablePoints();//25 on a 5x5 at the start
-        if (pointsAvailable.isEmpty()) return 0; 
+        List<PointsAndScores> pointsAvailable = getBestMoves(b);
+        if (pointsAvailable.isEmpty()) return 0;
 
-        List<Integer> scores = new ArrayList<>(); 
+        List<Integer> scores = new ArrayList<>();
 
+//        for (PointsAndScores item:pointsAvailable)
+//            System.out.println(item.point +"  " +item.score);
+//        System.out.println();
+//        b.displayBoard();
         for (int i = 0; i < pointsAvailable.size(); ++i) {
-            Point point = pointsAvailable.get(i);  
+//            Point point = getBestMoves(b,1).get(i).point;
+            Point point = pointsAvailable.get(i).point;
 
             if (turn == 1) {
-                b.placeAMove(getBestMove(b,1), 1);
-                int currentScore = minimax(depth + 1, 2, b);  
-                scores.add(currentScore); 
-                if (depth == 0 && rootsChildrenScores!=null)
+                b.placeAMove(point, 1);
+                int currentScore = minimax(depth + 1, 2, b);
+                scores.add(currentScore);
+                if (depth == 0 && rootsChildrenScores != null)
                     rootsChildrenScores.add(new PointsAndScores(currentScore, point));
-                
+
             } else if (turn == 2) {
-                b.placeAMove(getBestMove(b,2), 2);
-                scores.add(minimax(depth + 1, 1, b));  
+                b.placeAMove(point, 2);
+                scores.add(minimax(depth + 1, 1, b));
             }
             b.placeAMove(point, 0);
         }
         return turn == 1 ? returnMax(scores) : returnMin(scores);
     }
-    public Point getBestMove( Board b,int player) {
+
+    public List<PointsAndScores> getBestMoves(Board b) {
         int max;
         Point point;
         Board copy;
 
-        List<Integer> scores = new ArrayList<>();
-        for (int i = 0; i < b.availablePoints.size(); ++i) {
-            point = b.availablePoints.get(i);
-            copy = b.getBoard();
+        List<PointsAndScores> scores = new ArrayList<>();
+        for (int i = 0; i < b.getAvailablePoints().size(); ++i) {
+            point = b.getAvailablePoints().get(i);
+            copy = new Board();
+            copy.board = copyBoard(b);
+            copy.placeAMove(new Point(0,1),2);
             copy.placeAMove(point, 1);
-            scores.add(heuristicScore(copy,player));
+            copy.displayBoard();
+            System.out.println(heuristicScore(copy));
+            scores.add(new PointsAndScores(heuristicScore(copy), point));
         }
-        List<Integer> scoresSorted = scores;
-        Collections.sort(scoresSorted);
-        max =scoresSorted.get(scoresSorted.size()-1);
-        point = b.availablePoints.get(scores.indexOf(max)); // "scores.indexOf(max) shares the index of its respective point in pointsAvailable
-        return point;
+
+        Collections.reverse(scores);
+        return scores;
     }
-    public int heuristicScore(Board b,int player) {
+
+    public int heuristicScore(Board b) {
         int score = 0;
         int potentialScore;
-        char marker;
-        char enemy;
-        if (player == 1) {
-            marker = 'X';
-            enemy = 'O';
-        }
-        if (player == 2) {
-            marker = 'O';
-            enemy = 'X';
-        }
-        else return 0;
-//        if (b.hasXWon())
-//            return 100;//score for already won
-//        if (b.hasOWon())
-//            return -100;//score for already lost :(
         //Evaluate rows
         for (int i = 0; i < b.size; i++) {
-            potentialScore =0;
+            potentialScore = 0;
             //First row
             for (int j = 0; j < b.size; j++) {
-                if (b.board[i][j] == marker)
+                if (b.board[i][j] == 1)
                     potentialScore++;
-                if (b.board[i][j] == enemy) {
-                    if (potentialScore > 0)
-                        potentialScore = 0;
-                    else potentialScore--;
+                if (b.board[i][j] == 2) {
+                    potentialScore = -1;
+                    break;
                 }
+
             }
-            score+=potentialScore;
+            score += potentialScore;
         }
         //Evaluate columns
         for (int i = 0; i < b.size; i++) {
-            potentialScore =0;
+            potentialScore = 0;
             //First column
             for (int j = 0; j < b.size; j++) {
-                if (b.board[j][i] == marker)
+                if (b.board[j][i] == 1)
                     potentialScore++;
-                if (b.board[j][i] == enemy) {
-                    if (potentialScore > 0)
-                        potentialScore = 0;
-                    else potentialScore--;
+                if (b.board[j][i] == 2) {
+                    potentialScore = -1;
+                    break;
                 }
             }
-            score+=potentialScore;
+            score += potentialScore;
         }
         return score;
     }
+
+    public int[][] copyBoard(Board b) {
+        int[][] original = b.board;
+        int[][] copy = new int[original.length][original[0].length];
+        for (int i = 0; i < original.length; i++) {
+            for (int j = 0; j < original[i].length; j++) {
+                copy[i][j] = original[i][j];
+            }
+        }
+        return copy;
+    }
 }
+
+
+

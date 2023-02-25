@@ -3,7 +3,7 @@ import java.util.*;
 /*
    Point is a simple class with a constructor and an int to string method
 */
-class Point {
+class Point implements Cloneable{
     int x, y;
 
     //constructor that takes two integers as arguments to define a point
@@ -22,14 +22,18 @@ class Point {
 /*
    PointsAndScores is a simple class with a constructor
 */
-class PointsAndScores {
+class PointsAndScores implements Comparable<PointsAndScores> {
     int score;
     Point point;
 
     //constructor that takes a Point object and its score as arguments
-    PointsAndScores(int score, Point point) {
+    PointsAndScores(int score, Point point){
         this.score = score;
         this.point = point;
+    }
+    @Override
+    public int compareTo(PointsAndScores other){
+        return Integer.compare(this.score,other.score);
     }
 }
 
@@ -38,18 +42,27 @@ class PointsAndScores {
    getting available moves (empty positions on the board), placing a player's move at a given position,
    and displaying the current board.
 */
-class Board {
+class Board implements Cloneable{
     public static final int size = 5;
-    List<Point> availablePoints; //an instance of the List class, list of Point objects
-    Scanner scan = new Scanner(System.in); //an instance of the Scanner class
-    int[][] board = new int[size][size]; //an integer array holding the 3x3 game positions. 0 - empty, 1 - Player 'X', 2 - Player 'O'.
+    List<Point> availablePoints;
+    Scanner scan;
+    int[][] board;
 
     //constructor
     public Board() {
-//        for (int i = 0;i < size ; i++){
-//            for (int j = 0; j < size ; j++)
-//                board[i][j] = 0;
-//        }
+        scan = new Scanner(System.in); //an instance of the Scanner class
+        board = new int[size][size]; //an integer array holding the 3x3 game positions. 0 - empty, 1 - Player 'X', 2 - Player 'O'.
+
+    }
+    @Override
+    public Board clone()throws CloneNotSupportedException{
+        try {
+            return (Board) super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            throw new AssertionError();  // should not happen
+        }
+
     }
 
     //method for checking whether the game is over
@@ -74,14 +87,14 @@ class Board {
 
     //method for checking whether player 'O' has won (Player 'O' is represented as 2)
     public boolean hasOWon() {
-        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 1) ||
-                (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 1))
+        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 2) ||
+                (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 2))
                 return true;
          //Check diagonal lines
 
         for (int i = 0; i < size; ++i) {
-            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 1) ||
-                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 1))
+            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 2) ||
+                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 2))
                 return true;
         }
         //Check rows and columns
