@@ -39,13 +39,17 @@ class PointsAndScores {
    and displaying the current board.
 */
 class Board {
-    public static final int size = 4;
+    public static final int size = 5;
     List<Point> availablePoints; //an instance of the List class, list of Point objects
     Scanner scan = new Scanner(System.in); //an instance of the Scanner class
     int[][] board = new int[size][size]; //an integer array holding the 3x3 game positions. 0 - empty, 1 - Player 'X', 2 - Player 'O'.
 
     //constructor
     public Board() {
+        for (int i = 0;i < size ; i++){
+            for (int j = 0; j < size ; j++)
+                board[i][j] = 0;
+        }
     }
 
     //method for checking whether the game is over
@@ -55,29 +59,33 @@ class Board {
 
     //method for checking whether player 'X' has won (Player 'X' is represented as 1)
     public boolean hasXWon() {
-        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == 1) || (board[0][3] == board[1][2] && board[0][3] == board[2][1] && board[0][3] == board[3][1] && board[0][3] == 1)) {
+        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 1) ||
+                (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 1))
             return true;
-        } //Check diagonal lines
+         //Check diagonal lines
         for (int i = 0; i < size; ++i) {
-            if (((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == 1)
-                    || (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[2][i] && board[0][i] == 1))) {
+            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 1) ||
+                (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 1))
                 return true;
-            }
-        } //Check rows and columns
+        }
+        //Check rows and columns
         return false;
     }
 
     //method for checking whether player 'O' has won (Player 'O' is represented as 2)
     public boolean hasOWon() {
-        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == 2) || (board[0][3] == board[1][2] && board[0][3] == board[2][1] && board[0][3] == board[3][1] && board[0][3] == 2)) {
-            return true;
-        } //Check diagonal lines
-        for (int i = 0; i < size; ++i) {
-            if (((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == 2)
-                    || (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == 2))) {
+        if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 1) ||
+                (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 1))
                 return true;
-            }
-        } //Check rows and columns
+         //Check diagonal lines
+
+        for (int i = 0; i < size; ++i) {
+            if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 1) ||
+                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 1))
+                return true;
+        }
+        //Check rows and columns
+
         return false;
     }
 
