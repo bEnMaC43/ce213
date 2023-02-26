@@ -121,9 +121,9 @@ class AIplayer {
                     opponentCounters++;
             }
             if (playerCounters==0&&opponentCounters>0)
-                score--;
+                score-=100;
             else if (opponentCounters==0&&playerCounters>0)
-                score++;
+                score+=100;
         }
         //Evaluate columns
         playerCounters=0; opponentCounters =0;
@@ -136,9 +136,9 @@ class AIplayer {
                     opponentCounters++;
             }
             if (playerCounters==0&&opponentCounters>0)
-                score--;
+                score-=100;
             else if (opponentCounters==0&&playerCounters>0)
-                score++;
+                score+=100;
         }
 
         //diagonals
@@ -150,9 +150,9 @@ class AIplayer {
                 opponentCounters++;
         }
         if (playerCounters==0&&opponentCounters>0)
-            score--;
+            score-=100;
         else if (opponentCounters==0&&playerCounters>0)
-            score++;
+            score+=100;
         playerCounters=0; opponentCounters =0;
         for (int i = 0; i < b.size ; i++){
             if (b.board[i][b.size-1-i] == player)
@@ -161,9 +161,9 @@ class AIplayer {
                 opponentCounters++;
         }
         if (playerCounters==0&&opponentCounters>0)
-            score--;
+            score-=100;
         else if (opponentCounters==0&&playerCounters>0)
-            score++;
+            score+=100;
 
 
         return score;
