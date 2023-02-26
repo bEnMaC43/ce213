@@ -1,12 +1,14 @@
-//You are supposed to add your comments
-
 import java.util.*;
 
+/*
+   AIplayer is a class that contains the methods for implementing the minimax search for playing the TicTacToe game.
+*/
 class AIplayer {
-    List<Point> availablePoints;
-    public List<PointsAndScores> rootsChildrenScores = new ArrayList<>();
-    private static final int MAX_DEPTH = 3;
-
+    List<Point> availablePoints; //an instance of the List class, a list of Point objects (equivalent to possible moves)
+    List<PointsAndScores> rootsChildrenScores; //an instance of the List class, a list of PointsAndScores objects holding the available moves and their values at the root of the search tree, i.e., the current game board.
+    Board b = new Board(); //an instance of the Board class
+    private static final int MAX_DEPTH = 6;
+    //constructor
     public AIplayer() {
     }
 
@@ -51,103 +53,121 @@ class AIplayer {
 
     public void callMinimax(int depth, int turn, Board b) {
         rootsChildrenScores = new ArrayList<>();
-//        for (Point p : b.getAvailablePoints())
-//            System.out.println(p);
-//        System.out.println("break");
-
-        minimax(depth, turn, b);
+        minimax(depth, turn, Integer.MIN_VALUE, Integer.MAX_VALUE, b);
     }
 
-    public int minimax(int depth, int turn, Board b) {
-        if (depth > MAX_DEPTH)//stops minimax search continuing to any depth reducing search time significantly
-            return 0;
+    public int minimax(int depth, int turn, int alpha, int beta, Board b) {
         if (b.hasXWon()) return 1;
         if (b.hasOWon()) return -1;
-        List<PointsAndScores> pointsAvailable = getBestMoves(b);
+        List<Point> pointsAvailable = b.getAvailablePoints();
         if (pointsAvailable.isEmpty()) return 0;
 
         List<Integer> scores = new ArrayList<>();
 
-//        for (PointsAndScores item:pointsAvailable)
-//            System.out.println(item.point +"  " +item.score);
-//        System.out.println();
-//        b.displayBoard();
+        int temp;
+        if (turn == 1) temp = Integer.MIN_VALUE;
+        else temp = Integer.MAX_VALUE;
+
         for (int i = 0; i < pointsAvailable.size(); ++i) {
-//            Point point = getBestMoves(b,1).get(i).point;
-            Point point = pointsAvailable.get(i).point;
+            Point point = pointsAvailable.get(i);
 
             if (turn == 1) {
                 b.placeAMove(point, 1);
-                int currentScore = minimax(depth + 1, 2, b);
+                int currentScore = 0;
+                if (depth < MAX_DEPTH) {
+                    currentScore = minimax(depth + 1, 2, alpha, beta, b);
+                } else {
+                    currentScore = heuristicScore(b, 1);
+                }
                 scores.add(currentScore);
-                if (depth == 0 && rootsChildrenScores != null)
+                temp = Math.max(temp, currentScore);
+                alpha = Math.max(alpha, temp);
+                if (depth == 0)
                     rootsChildrenScores.add(new PointsAndScores(currentScore, point));
-
             } else if (turn == 2) {
                 b.placeAMove(point, 2);
-                scores.add(minimax(depth + 1, 1, b));
+                int currentScore = 0;
+                if (depth < MAX_DEPTH) {
+                    currentScore = minimax(depth + 1, 1, alpha, beta, b);
+                } else {
+                    currentScore = heuristicScore(b, 2);
+                }
+                scores.add(currentScore);
+                temp = Math.min(temp, currentScore);
+                beta = Math.min(beta, temp);
             }
             b.placeAMove(point, 0);
+            if (temp == Integer.MIN_VALUE || temp == Integer.MAX_VALUE) break; //added for alpha-beta pruning
+            if (beta <= alpha) break; //added for alpha-beta pruning
         }
-        return turn == 1 ? returnMax(scores) : returnMin(scores);
+        if (turn == 1) return returnMax(scores);
+        else return returnMin(scores);
     }
 
-    public List<PointsAndScores> getBestMoves(Board b) {
-        int max;
-        Point point;
-        Board copy;
-
-        List<PointsAndScores> scores = new ArrayList<>();
-        for (int i = 0; i < b.getAvailablePoints().size(); ++i) {
-            point = b.getAvailablePoints().get(i);
-            copy = new Board();
-            copy.board = copyBoard(b);
-            copy.placeAMove(new Point(0,1),2);
-            copy.placeAMove(point, 1);
-            copy.displayBoard();
-            System.out.println(heuristicScore(copy));
-            scores.add(new PointsAndScores(heuristicScore(copy), point));
-        }
-
-        Collections.reverse(scores);
-        return scores;
-    }
-
-    public int heuristicScore(Board b) {
-        int score = 0;
-        int potentialScore;
+    public int heuristicScore(Board b,int player) {
+        int opponent;
+        if (player ==1)
+            opponent=2;
+        else opponent=1;
+        int score =0;
+        int playerCounters=0 ,opponentCounters =0;
         //Evaluate rows
         for (int i = 0; i < b.size; i++) {
-            potentialScore = 0;
             //First row
             for (int j = 0; j < b.size; j++) {
-                if (b.board[i][j] == 1)
-                    potentialScore++;
-                if (b.board[i][j] == 2) {
-                    potentialScore = -1;
-                    break;
-                }
-
+                if (b.board[i][j] == player)
+                    playerCounters++;
+                else if (b.board[i][j] == opponent)
+                    opponentCounters++;
             }
-            score += potentialScore;
+            if (playerCounters==0&&opponentCounters>0)
+                score--;
+            else if (opponentCounters==0&&playerCounters>0)
+                score++;
         }
         //Evaluate columns
+        playerCounters=0; opponentCounters =0;
         for (int i = 0; i < b.size; i++) {
-            potentialScore = 0;
             //First column
             for (int j = 0; j < b.size; j++) {
-                if (b.board[j][i] == 1)
-                    potentialScore++;
-                if (b.board[j][i] == 2) {
-                    potentialScore = -1;
-                    break;
-                }
+                if (b.board[j][i] == player)
+                    playerCounters++;
+                else if (b.board[j][i] == opponent)
+                    opponentCounters++;
             }
-            score += potentialScore;
+            if (playerCounters==0&&opponentCounters>0)
+                score--;
+            else if (opponentCounters==0&&playerCounters>0)
+                score++;
         }
+
+        //diagonals
+        playerCounters=0; opponentCounters =0;
+        for (int i = 0; i < b.size ; i++){
+            if (b.board[i][i] == player)
+                playerCounters++;
+            else if (b.board[i][i] == opponent)
+                opponentCounters++;
+        }
+        if (playerCounters==0&&opponentCounters>0)
+            score--;
+        else if (opponentCounters==0&&playerCounters>0)
+            score++;
+        playerCounters=0; opponentCounters =0;
+        for (int i = 0; i < b.size ; i++){
+            if (b.board[i][b.size-1-i] == player)
+                playerCounters++;
+            else if (b.board[i][b.size-1-i] == opponent)
+                opponentCounters++;
+        }
+        if (playerCounters==0&&opponentCounters>0)
+            score--;
+        else if (opponentCounters==0&&playerCounters>0)
+            score++;
+
+
         return score;
     }
-
     public int[][] copyBoard(Board b) {
         int[][] original = b.board;
         int[][] copy = new int[original.length][original[0].length];
@@ -158,7 +178,6 @@ class AIplayer {
         }
         return copy;
     }
+
+
 }
-
-
-

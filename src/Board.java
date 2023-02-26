@@ -75,10 +75,10 @@ class Board implements Cloneable{
         if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 1) ||
                 (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 1))
             return true;
-         //Check diagonal lines
+        //Check diagonal lines
         for (int i = 0; i < size; ++i) {
             if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 1) ||
-                (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 1))
+                    (board[0][i] == board[1][i] && board[0][i] == board[2][i] && board[0][i] == board[3][i] && board[0][i] == board[4][i] && board[0][i] == 1))
                 return true;
         }
         //Check rows and columns
@@ -89,8 +89,8 @@ class Board implements Cloneable{
     public boolean hasOWon() {
         if ((board[0][0] == board[1][1] && board[0][0] == board[2][2] && board[0][0] == board[3][3] && board[0][0] == board[4][4] && board[0][0] == 2) ||
                 (board[0][4] == board[1][3] && board[0][4] == board[2][2] && board[0][4] == board[3][1] && board[0][4] == board[4][0] && board[0][4] == 2))
-                return true;
-         //Check diagonal lines
+            return true;
+        //Check diagonal lines
 
         for (int i = 0; i < size; ++i) {
             if ((board[i][0] == board[i][1] && board[i][0] == board[i][2] && board[i][0] == board[i][3] && board[i][0] == board[i][4] && board[i][0] == 2) ||
@@ -118,7 +118,7 @@ class Board implements Cloneable{
 
     //method for getting the status of a position
     public int getState(Point point){
-    	return board[point.x][point.y];
+        return board[point.x][point.y];
     }
 
     //method for placing a player's move at a given position
@@ -132,7 +132,7 @@ class Board implements Cloneable{
 
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
- 		if (board[i][j]==1)
+                if (board[i][j]==1)
                     System.out.print("X ");
                 else if (board[i][j]==2)
                     System.out.print("O ");
