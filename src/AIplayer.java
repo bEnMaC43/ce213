@@ -1,13 +1,11 @@
 import java.util.*;
 
-/*
-   AIplayer is a class that contains the methods for implementing the minimax search for playing the TicTacToe game.
-*/
+// AIplayer is a class that contains the methods for implementing the minimax search for playing the TicTacToe game.
 class AIplayer {
     List<Point> availablePoints; //an instance of the List class, a list of Point objects (equivalent to possible moves)
     List<PointsAndScores> rootsChildrenScores; //an instance of the List class, a list of PointsAndScores objects holding the available moves and their values at the root of the search tree, i.e., the current game board.
     Board b = new Board(); //an instance of the Board class
-    private static final int MAX_DEPTH = 6;
+    private static final int MAX_DEPTH = 8;
     //constructor
     public AIplayer() {
     }
@@ -103,142 +101,71 @@ class AIplayer {
         if (turn == 1) return returnMax(scores);
         else return returnMin(scores);
     }
-
-    public int heuristicScore(Board b,int player) {
-        int score = 0;
-        int op;
-        if (player ==1)
-             op = 2;
-        else op =1;
-
-        // check rows
-        for (int i = 0; i < 5; i++) {
-            int countPlayer1 = 0;
-            int countPlayer2 = 0;
-            for (int j = 0; j < 5; j++) {
-                if (b.board[i][j] == player) {
-                    countPlayer1++;
-                } else if (b.board[i][j] == op) {
-                    countPlayer2++;
-                }
-            }
-            score += scoreRow(countPlayer1, countPlayer2);
+    
+public int heuristicScore(Board b,int player) {
+    int opponent;
+    if (player ==1)
+        opponent=2;
+    else opponent=1;
+    int score =0;
+    int playerCounters=0 ,opponentCounters =0;
+    //Evaluate rows
+    for (int i = 0; i < b.size; i++) {
+        //First row
+        for (int j = 0; j < b.size; j++) {
+            if (b.board[i][j] == player)
+                playerCounters++;
+            else if (b.board[i][j] == opponent)
+                opponentCounters++;
         }
-
-        // check columns
-        for (int j = 0; j < 5; j++) {
-            int countPlayer1 = 0;
-            int countPlayer2 = 0;
-            for (int i = 0; i < 5; i++) {
-                if (b.board[i][j] == player) {
-                    countPlayer1++;
-                } else if (b.board[i][j] == op) {
-                    countPlayer2++;
-                }
-            }
-            score += scoreColumn(countPlayer1, countPlayer2);
+        if (playerCounters==0&&opponentCounters>0)
+            score--;
+        else if (opponentCounters==0&&playerCounters>0)
+            score++;
+    }
+    //Evaluate columns
+    playerCounters=0; opponentCounters =0;
+    for (int i = 0; i < b.size; i++) {
+        //First column
+        for (int j = 0; j < b.size; j++) {
+            if (b.board[j][i] == player)
+                playerCounters++;
+            else if (b.board[j][i] == opponent)
+                opponentCounters++;
         }
-
-        // check diagonals
-        int countPlayer1Diag1 = 0;
-        int countPlayer2Diag1 = 0;
-        int countPlayer1Diag2 = 0;
-        int countPlayer2Diag2 = 0;
-        for (int i = 0; i < 5; i++) {
-            if (b.board[i][i] == player) {
-                countPlayer1Diag1++;
-            } else if (b.board[i][i] == op) {
-                countPlayer2Diag1++;
-            }
-            if (b.board[i][4-i] == player) {
-                countPlayer1Diag2++;
-            } else if (b.board[i][4-i] == op) {
-                countPlayer2Diag2++;
-            }
-        }
-        score += scoreDiagonal(countPlayer1Diag1, countPlayer2Diag1);
-        score += scoreDiagonal(countPlayer1Diag2, countPlayer2Diag2);
-
-        return score;
+        if (playerCounters==0&&opponentCounters>0)
+            for (int x = 0; x < opponentCounters; x++)
+                score--;
+        else if (opponentCounters==0&&playerCounters>0)
+            score++;
     }
 
-    private int scoreRow(int countPlayer1, int countPlayer2) {
-        if (countPlayer1 == 5) {
-            return 100;
-        } else if (countPlayer2 == 5) {
-            return -100;
-        } else if (countPlayer1 == 4 && countPlayer2 == 0) {
-            return 10;
-        } else if (countPlayer1 == 3 && countPlayer2 == 0) {
-            return 5;
-        } else if (countPlayer1 == 2 && countPlayer2 == 0) {
-            return 2;
-        } else if (countPlayer2 == 4 && countPlayer1 == 0) {
-            return -10;
-        } else if (countPlayer2 == 3 && countPlayer1 == 0) {
-            return -5;
-        } else if (countPlayer2 == 2 && countPlayer1 == 0) {
-            return -2;
-        } else {
-            return 0;
-        }
+    //diagonals
+    playerCounters=0; opponentCounters =0;
+    for (int i = 0; i < b.size ; i++){
+        if (b.board[i][i] == player)
+            playerCounters++;
+        else if (b.board[i][i] == opponent)
+            opponentCounters++;
     }
-
-    private int scoreColumn(int countPlayer1, int countPlayer2) {
-        if (countPlayer1 == 5) {
-            return 100;
-        } else if (countPlayer2 == 5) {
-            return -100;
-        } else if (countPlayer1 == 4 && countPlayer2 == 0) {
-            return 10;
-        } else if (countPlayer1 == 3 && countPlayer2 == 0) {
-            return 5;
-        } else if (countPlayer1 == 2 && countPlayer2 == 0) {
-            return 2;
-        } else if (countPlayer2 == 4 && countPlayer1 == 0) {
-            return -10;
-        } else if (countPlayer2 == 3 && countPlayer1 == 0) {
-            return -5;
-        } else if (countPlayer2 == 2 && countPlayer1 == 0) {
-            return -2;
-        } else {
-            return 0;
-        }
+    if (playerCounters==0&&opponentCounters>0)
+        score--;
+    else if (opponentCounters==0&&playerCounters>0)
+        score++;
+    playerCounters=0; opponentCounters =0;
+    for (int i = 0; i < b.size ; i++){
+        if (b.board[i][b.size-1-i] == player)
+            playerCounters++;
+        else if (b.board[i][b.size-1-i] == opponent)
+            opponentCounters++;
     }
-
-    private int scoreDiagonal(int countPlayer1, int countPlayer2) {
-        if (countPlayer1 == 5) {
-            return 100;
-        } else if (countPlayer2 == 5) {
-            return -100;
-        } else if (countPlayer1 == 4 && countPlayer2 == 0) {
-            return 10;
-        } else if (countPlayer1 == 3 && countPlayer2 == 0) {
-            return 5;
-        } else if (countPlayer1 == 2 && countPlayer2 == 0) {
-            return 2;
-        } else if (countPlayer2 == 4 && countPlayer1 == 0) {
-            return -10;
-        } else if (countPlayer2 == 3 && countPlayer1 == 0) {
-            return -5;
-        } else if (countPlayer2 == 2 && countPlayer1 == 0) {
-            return -2;
-        } else {
-            return 0;
-        }
-    }
+    if (playerCounters==0&&opponentCounters>0)
+        score--;
+    else if (opponentCounters==0&&playerCounters>0)
+        score++;
 
 
-    public int[][] copyBoard(Board b) {
-        int[][] original = b.board;
-        int[][] copy = new int[original.length][original[0].length];
-        for (int i = 0; i < original.length; i++) {
-            for (int j = 0; j < original[i].length; j++) {
-                copy[i][j] = original[i][j];
-            }
-        }
-        return copy;
-    }
-
+    return score;
+}
 
 }
