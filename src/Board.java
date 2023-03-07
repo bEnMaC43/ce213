@@ -1,27 +1,19 @@
 import java.util.*;
 
-/*
-   Point is a simple class with a constructor and an int to string method
-*/
-class Point implements Cloneable{
-    int x, y;
 
-    //constructor that takes two integers as arguments to define a point
+class Point {
+    int x, y;
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
-
     @Override
-    //method for converting integer to string
     public String toString() {
         return "[" + (x+1) + ", " + (y+1) + "]";
     }
 }
 
-/*
-   PointsAndScores is a simple class with a constructor
-*/
+
 class PointsAndScores implements Comparable<PointsAndScores> {
     int score;
     Point point;
@@ -37,12 +29,7 @@ class PointsAndScores implements Comparable<PointsAndScores> {
     }
 }
 
-/*
-   Board is a class that contains methods for checking game status and position status,
-   getting available moves (empty positions on the board), placing a player's move at a given position,
-   and displaying the current board.
-*/
-class Board implements Cloneable{
+class Board {
     public static final int size = 5;
     List<Point> availablePoints;
     Scanner scan;
@@ -52,16 +39,6 @@ class Board implements Cloneable{
     public Board() {
         scan = new Scanner(System.in); //an instance of the Scanner class
         board = new int[size][size]; //an integer array holding the 3x3 game positions. 0 - empty, 1 - Player 'X', 2 - Player 'O'.
-
-    }
-    @Override
-    public Board clone()throws CloneNotSupportedException{
-        try {
-            return (Board) super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            throw new AssertionError();  // should not happen
-        }
 
     }
 
@@ -117,7 +94,7 @@ class Board implements Cloneable{
     }
 
     //method for getting the status of a position
-    public int getState(Point point){
+    public int getState(Point point) {
         return board[point.x][point.y];
     }
 
@@ -132,9 +109,9 @@ class Board implements Cloneable{
 
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
-                if (board[i][j]==1)
+                if (board[i][j] == 1)
                     System.out.print("X ");
-                else if (board[i][j]==2)
+                else if (board[i][j] == 2)
                     System.out.print("O ");
                 else
                     System.out.print(". ");
@@ -142,5 +119,4 @@ class Board implements Cloneable{
             System.out.println();
         }
     }
-    public Board getBoard(){return this;}
 }

@@ -101,85 +101,7 @@ class AIplayer {
         if (turn == 1) return returnMax(scores);
         else return returnMin(scores);
     }
-<<<<<<< HEAD
 
-    public int heuristicScore(Board b,int player) {
-        int opponent;
-        if (player ==1)
-            opponent=2;
-        else opponent=1;
-        int score =0;
-        int playerCounters=0 ,opponentCounters =0;
-        //Evaluate rows
-        for (int i = 0; i < b.size; i++) {
-            //First row
-            for (int j = 0; j < b.size; j++) {
-                if (b.board[i][j] == player)
-                    playerCounters++;
-                else if (b.board[i][j] == opponent)
-                    opponentCounters++;
-            }
-            if (playerCounters==0&&opponentCounters>0)
-                score-=100;
-            else if (opponentCounters==0&&playerCounters>0)
-                score+=100;
-        }
-        //Evaluate columns
-        playerCounters=0; opponentCounters =0;
-        for (int i = 0; i < b.size; i++) {
-            //First column
-            for (int j = 0; j < b.size; j++) {
-                if (b.board[j][i] == player)
-                    playerCounters++;
-                else if (b.board[j][i] == opponent)
-                    opponentCounters++;
-            }
-            if (playerCounters==0&&opponentCounters>0)
-                score-=100;
-            else if (opponentCounters==0&&playerCounters>0)
-                score+=100;
-        }
-
-        //diagonals
-        playerCounters=0; opponentCounters =0;
-        for (int i = 0; i < b.size ; i++){
-            if (b.board[i][i] == player)
-                playerCounters++;
-            else if (b.board[i][i] == opponent)
-                opponentCounters++;
-        }
-        if (playerCounters==0&&opponentCounters>0)
-            score-=100;
-        else if (opponentCounters==0&&playerCounters>0)
-            score+=100;
-        playerCounters=0; opponentCounters =0;
-        for (int i = 0; i < b.size ; i++){
-            if (b.board[i][b.size-1-i] == player)
-                playerCounters++;
-            else if (b.board[i][b.size-1-i] == opponent)
-                opponentCounters++;
-        }
-        if (playerCounters==0&&opponentCounters>0)
-            score-=100;
-        else if (opponentCounters==0&&playerCounters>0)
-            score+=100;
-
-
-        return score;
-    }
-    public int[][] copyBoard(Board b) {
-        int[][] original = b.board;
-        int[][] copy = new int[original.length][original[0].length];
-        for (int i = 0; i < original.length; i++) {
-            for (int j = 0; j < original[i].length; j++) {
-                copy[i][j] = original[i][j];
-            }
-        }
-        return copy;
-    }
-
-=======
-    
 public int heuristicScore(Board b,int player) {
     int opponent;
     if (player ==1)
@@ -245,6 +167,5 @@ public int heuristicScore(Board b,int player) {
 
     return score;
 }
->>>>>>> branch-2
 
 }
