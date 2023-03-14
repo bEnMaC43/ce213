@@ -2,10 +2,8 @@ import java.util.*;
 
 // AIplayer is a class that contains the methods for implementing the minimax search for playing the TicTacToe game.
 class AIplayer {
-    List<Point> availablePoints; //list of possible points on the board, possible moves to make
     List<PointsAndScores> rootsChildrenScores; //a list of PointsAndScores objects holding the available moves and their values at the root of the search tree, i.e., the current game board.
-    Board b = new Board(); //an instance of the Board class
-    private static final int MAX_DEPTH = 8; //max depth of the minimax search
+    private static final int MAX_DEPTH = 10; //max depth of the minimax search
     //constructor
     public AIplayer() {
     }
@@ -87,7 +85,7 @@ class AIplayer {
                 if (depth < MAX_DEPTH) { //if havent passed max tree depth continue minimax search down tree with new depth and board state
                     currentScore = minimax(depth + 1, 2, alpha, beta, b);
                 } else { //once max depth reached analyse the heuristic potential of the board at this depth
-                    currentScore = heuristicScore(b, 1);
+                    currentScore = heuristicScore(b);
                 }
                 //the score of this point is saved and added to list
                 scores.add(currentScore);
@@ -105,7 +103,7 @@ class AIplayer {
                     currentScore = minimax(depth + 1, 1, alpha, beta, b);
                 } else {
                     // If we have reached the maximum depth, use the heuristic score to evaluate the board
-                    currentScore = heuristicScore(b, 2);
+                    currentScore = heuristicScore(b);
                 }
                 // Add the current score to the list of scores for each available point, and update the temp score and beta value
                 scores.add(currentScore);
@@ -124,79 +122,75 @@ class AIplayer {
         }
 
         if (turn == 1) return returnMax(scores); //if player is 1 we are maxamising the potential value of the game state
-        else return returnMin(scores); //of the player is 2 we are minimising 
+        else return returnMin(scores); //of the player is 2 we are minimising
     }
 
     //returns the heuristic potential of a game state
-    //it has two arguments, one for the current board state saved as a board object and an int representing the player for whom we are we are completing this board analysis
-    //eg: if player == 1 then it checks for the heuristic potential of the ai's pieces and therefore how close the ai is to winning
-    public int heuristicScore(Board b,int player) {
-        //saves the oponents integer value based on the value of player1 pased in method perameter
-        int opponent;
-        if (player ==1)
-            opponent=2;
-        else opponent=1;
+    //it has one argument, a board obj that has the game state being analysed saved
+    public int heuristicScore(Board b) {
         int score =0; //saves heuristic score
-        int playerCounters=0 ,opponentCounters =0;//saves how many counters each player has on a row
+        int Xcounters=0 ,Ocounters =0;//saves how many counters each player has on a row
+
+
         //Evaluate rows
         for (int i = 0; i < b.size; i++) {
             //First row
             for (int j = 0; j < b.size; j++) {
-                if (b.board[i][j] == player)
-                    playerCounters++; //foreach player1 counter increment
-                else if (b.board[i][j] == opponent)
-                    opponentCounters++; //same for oponent counters
+                if (b.board[i][j] == 'X')
+                    Xcounters++; //foreach X counter increment
+                else if (b.board[i][j] == 'O')
+                    Ocounters++; //same for O counters
             }
-            //if there is 0 player counters and multiple oponent counters decrease score for each opp counter
-            if (playerCounters==0&&opponentCounters>0)
-                score-=opponentCounters;
-            //inverse for 0 opp counters and each player counter
-            else if (opponentCounters==0&&playerCounters>0)
-                score+=playerCounters;
+            //if there is 0 X counters and multiple O counters decrease score for each opp counter
+            if (Xcounters==0&&Ocounters>0)
+                score-=Ocounters;
+            //inverse for 0 O counters and each X counter
+            else if (Ocounters==0&&Xcounters>0)
+                score+=Xcounters;
             //if there is none of either or a mix then the row has no potential so score is unaltered
         }
         //Repeats for every column
         //Evaluate columns
-        playerCounters=0; opponentCounters =0;
+        Xcounters=0; Ocounters =0;
         for (int i = 0; i < b.size; i++) {
             //First column
             for (int j = 0; j < b.size; j++) {
-                if (b.board[j][i] == player)
-                    playerCounters++;
-                else if (b.board[j][i] == opponent)
-                    opponentCounters++;
+                if (b.board[j][i] == 'X')
+                    Xcounters++;
+                else if (b.board[j][i] == 'O')
+                    Ocounters++;
             }
-            if (playerCounters==0&&opponentCounters>0)
+            if (Xcounters==0&&Ocounters>0)
 
-                score-=opponentCounters;
-            else if (opponentCounters==0&&playerCounters>0)
-                score+=playerCounters;
+                score-=Ocounters;
+            else if (Ocounters==0&&Xcounters>0)
+                score+=Xcounters;
         }
 
         //diagonals
-        playerCounters=0; opponentCounters =0;
+        Xcounters=0; Ocounters =0;
         for (int i = 0; i < b.size ; i++){
-            if (b.board[i][i] == player)
-                playerCounters++;
-            else if (b.board[i][i] == opponent)
-                opponentCounters++;
+            if (b.board[i][i] == 'X')
+                Xcounters++;
+            else if (b.board[i][i] == 'O')
+                Ocounters++;
         }
-        if (playerCounters==0&&opponentCounters>0)
-            score-=opponentCounters;
-        else if (opponentCounters==0&&playerCounters>0)
-            score+=playerCounters;
-        playerCounters=0; opponentCounters =0;
+        if (Xcounters==0&&Ocounters>0)
+            score-=Ocounters;
+        else if (Ocounters==0&&Xcounters>0)
+            score+=Xcounters;
+        Xcounters=0; Ocounters =0;
         //checks other diaganol
         for (int i = 0; i < b.size ; i++){
-            if (b.board[i][b.size-1-i] == player)
-                playerCounters++;
-            else if (b.board[i][b.size-1-i] == opponent)
-                opponentCounters++;
+            if (b.board[i][b.size-1-i] == 'X')
+                Xcounters++;
+            else if (b.board[i][b.size-1-i] == 'O')
+                Ocounters++;
         }
-        if (playerCounters==0&&opponentCounters>0)
-            score-=opponentCounters;
-        else if (opponentCounters==0&&playerCounters>0)
-            score+=playerCounters;
+        if (Xcounters==0&&Ocounters>0)
+            score-=Ocounters;
+        else if (Ocounters==0&&Xcounters>0)
+            score+=Xcounters;
 
 
         return score;
