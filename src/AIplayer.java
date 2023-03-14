@@ -3,7 +3,7 @@ import java.util.*;
 // AIplayer is a class that contains the methods for implementing the minimax search for playing the TicTacToe game.
 class AIplayer {
     List<PointsAndScores> rootsChildrenScores; //a list of PointsAndScores objects holding the available moves and their values at the root of the search tree, i.e., the current game board.
-    private static final int MAX_DEPTH = 10; //max depth of the minimax search
+    private static final int MAX_DEPTH = 6; //max depth of the minimax search
     //constructor
     public AIplayer() {
     }
@@ -57,7 +57,8 @@ class AIplayer {
     }
 
     //Minimax method for a tic tac toe game with alpha beta pruning
-    //Arguments are the search depth, the players turn as an int, the game board
+    //Arguments are the search depth, the players turn as an int, the game board and ints for alpha and beta which save the min and max value respectively that a java integer can be
+    //This is so we can implement alpha beta purning to eliminate sub trees that do not need to be evaluated further
     public int minimax(int depth, int turn, int alpha, int beta, Board b) {
         //Checks if a player has already won
         if (b.hasXWon()) return 1;
@@ -72,8 +73,8 @@ class AIplayer {
 
         int temp;
         //if its Xs turn set integer temp to min value an int can be otherwise set it to the max value an int can be in java
-        if (turn == 1) temp = Integer.MIN_VALUE;
-        else temp = Integer.MAX_VALUE;
+        if (turn == 1) temp = Integer.MIN_VALUE; //same as alpha
+        else temp = Integer.MAX_VALUE; //same as beta
 
         //iterate through each available point on the board
         for (int i = 0; i < pointsAvailable.size(); ++i) {
